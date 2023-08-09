@@ -7,6 +7,7 @@ export type PaginationProps = {
   currentPage: number
   renderPageLink: (page: number, limit: number) => string
   itemsPerPage?: number
+  setPage: (value: any) => void
 }
 
 export const dotts = '...'
@@ -16,6 +17,7 @@ const Pagination = ({
   currentPage,
   itemsPerPage = 10,
   renderPageLink,
+  setPage,
 }: PaginationProps) => {
   const pages = usePagination(totalItems, currentPage, itemsPerPage)
 
@@ -30,6 +32,7 @@ const Pagination = ({
             {pageNumber}
           </span>
         ) : (
+          
           <Link
             key={i}
             href={renderPageLink(pageNumber as number, itemsPerPage)}

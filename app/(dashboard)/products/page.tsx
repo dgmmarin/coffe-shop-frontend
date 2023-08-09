@@ -2,25 +2,33 @@
 import Pagination from "@/app/components/pagination";
 import Link from "next/link";
 import { useSearchParams } from 'next/navigation'
-import { FC } from "react";
+import { useEffect, useState } from "react";
+import Loading from "./loading";
 
-interface pageProps { }
-
-const getProducts = async (page:number, limit:number) => {
-    const res = await fetch(`http://127.0.0.1:4000/product?page=${page}&limit=${limit}`, {
-        next: {
-            revalidate: 2
-        },
-    })
-    return await res.json()
-}
-
-const page: FC<pageProps> = async ({ }) => {
+const Page = () =>{
+    const getProducts = async (page:number, limit:number) => {
+        const res = await fetch(`http://127.0.0.1:4000/product?page=${page}&limit=${limit}`, {
+            next: {
+                revalidate: 2
+            },
+        })
+        return await res.json()
+    }
     const searchParams = useSearchParams()
-    const limit =parseInt(searchParams.get("limit") ?? "2") 
-    const page = parseInt(searchParams.get("page") ?? "1")
+    const limit = parseInt(searchParams.get("limit") ?? "2") 
+    const [data, setData] = useState({items:[],meta:{totalItems:0,itemsPerPage:0,  currentPage:1},})
+    var page = parseInt(searchParams.get("page") ?? "1")
+    
+    useEffect(() =>{
+            getProducts(page, limit).then((dt) => {
+                setData(dt)
+            })
+    },[page])
 
-    const data = await getProducts(page, limit)
+    if (data.items.length == 0) {
+        return <Loading></Loading>
+    }
+
     return <>
     <div className="relative w-full overflow-x-auto shadow-md">
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -52,9 +60,9 @@ const page: FC<pageProps> = async ({ }) => {
      totalItems={data.meta.totalItems}
      currentPage={data.meta.currentPage}
      itemsPerPage={data.meta.itemsPerPage}
-     renderPageLink={(page, limit) => `products?page=${page}&limit=${limit}`} />
+     renderPageLink={(page, limit) => `products?page=${page}&limit=${limit}`} 
+     setPage={()=>{}}/>
     </>
-
 }
 
-export default page
+export default Page
