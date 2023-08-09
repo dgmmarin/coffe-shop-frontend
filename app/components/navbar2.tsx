@@ -1,3 +1,5 @@
+import { useAuth } from "@/hooks/use-auth";
+
 export default function Navbar2(){
     return <nav className="bg-white border-b border-gray-200 fixed z-30 w-full">
       <div className="px-3 py-3 lg:px-5 lg:pl-3">

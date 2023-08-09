@@ -1,7 +1,9 @@
+"use client"
+import { User } from "@/hooks/use-user";
 import { FC } from "react";
 
 interface pageProps {
-    productId: number
+    user: User
 }
 
 const getProduct = async (id: number) => {

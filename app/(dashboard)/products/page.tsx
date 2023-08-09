@@ -1,10 +1,13 @@
+"use client"
+import Pagination from "@/app/components/pagination";
 import Link from "next/link";
+import { useSearchParams } from 'next/navigation'
 import { FC } from "react";
 
 interface pageProps { }
 
-const getProducts = async () => {
-    const res = await fetch("http://127.0.0.1:4000/product", {
+const getProducts = async (page:number, limit:number) => {
+    const res = await fetch(`http://127.0.0.1:4000/product?page=${page}&limit=${limit}`, {
         next: {
             revalidate: 2
         },
@@ -13,9 +16,13 @@ const getProducts = async () => {
 }
 
 const page: FC<pageProps> = async ({ }) => {
-    const data = await getProducts()
-    console.log(data);
-    return <div className="relative w-full overflow-x-auto shadow-md">
+    const searchParams = useSearchParams()
+    const limit =parseInt(searchParams.get("limit") ?? "2") 
+    const page = parseInt(searchParams.get("page") ?? "1")
+
+    const data = await getProducts(page, limit)
+    return <>
+    <div className="relative w-full overflow-x-auto shadow-md">
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
                 <tr>
@@ -28,8 +35,8 @@ const page: FC<pageProps> = async ({ }) => {
             </thead>
             <tbody>
                 {
-                    data.map((elem: any) => {
-                        return <tr className="bg-white border-b">
+                    data.items.map((elem: any) => {
+                        return <tr key={elem.id} className="bg-white border-b">
                             <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap "><Link href={"/dashboard/products/" + elem.id}> {elem.id}</Link></td>
                             <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">{elem.name}</td>
                             <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">{elem.um}</td>
@@ -41,6 +48,12 @@ const page: FC<pageProps> = async ({ }) => {
             </tbody>
         </table>
     </div>
+    <Pagination
+     totalItems={data.meta.totalItems}
+     currentPage={data.meta.currentPage}
+     itemsPerPage={data.meta.itemsPerPage}
+     renderPageLink={(page, limit) => `products?page=${page}&limit=${limit}`} />
+    </>
 
 }
 
