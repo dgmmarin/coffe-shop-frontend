@@ -1,3 +1,4 @@
+'use client'
 import { useAuth } from "@/hooks/use-auth";
 import Link from "next/link";
 

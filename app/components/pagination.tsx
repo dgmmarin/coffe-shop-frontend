@@ -1,3 +1,4 @@
+'use client'
 import Link from 'next/link'
 import React from 'react'
 import usePagination from '@/hooks/usePagination'
@@ -7,6 +8,7 @@ export type PaginationProps = {
   currentPage: number
   renderPageLink: (page: number, limit: number) => string
   itemsPerPage?: number
+  setPage: (value:any) => void
 }
 
 export const dotts = '...'
@@ -20,7 +22,7 @@ const Pagination = ({
   const pages = usePagination(totalItems, currentPage, itemsPerPage)
 
   return (
-    <div className="flex items-center justify-center my-8">
+    <div className="flex  my-8">
       {pages.map((pageNumber, i) =>
         pageNumber === dotts ? (
           <span

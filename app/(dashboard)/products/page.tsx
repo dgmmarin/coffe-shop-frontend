@@ -1,26 +1,41 @@
 "use client"
 import Pagination from "@/app/components/pagination";
 import Link from "next/link";
-import { useSearchParams } from 'next/navigation'
-import { FC } from "react";
+import { useRouter, useSearchParams } from 'next/navigation'
+import { FC, useEffect, useState } from "react";
+
 
 interface pageProps { }
 
-const getProducts = async (page:number, limit:number) => {
-    const res = await fetch(`http://127.0.0.1:4000/product?page=${page}&limit=${limit}`, {
-        next: {
-            revalidate: 2
-        },
-    })
-    return await res.json()
-}
 
-const page: FC<pageProps> = async ({ }) => {
+
+export default function Page(){
     const searchParams = useSearchParams()
-    const limit =parseInt(searchParams.get("limit") ?? "2") 
-    const page = parseInt(searchParams.get("page") ?? "1")
+    const router = useRouter();
+    const [limit, setLimit] = useState(parseInt(searchParams.get("limit") ?? "1"))
+    const [page, setPage] = useState( parseInt(searchParams.get("page") ?? "1"))
+    const [count, setCount] = useState(0);
+    const [data, setData] = useState({items:[],meta:{totalItems:10,itemsPerPage:limit,currentPage:page}})
+    useEffect(() =>{
+        const getProducts = async (page:number, limit:number) => {
+            const res = await fetch(`http://127.0.0.1:4000/product?page=${page}&limit=${limit}`, {
+                next: {
+                    revalidate: 2
+                },
+            })
+            return await res.json()
+        }
 
-    const data = await getProducts(page, limit)
+        getProducts(page, limit).then(_data => {
+            console.log(page)
+            console.log(searchParams.get("page"))
+            setPage(parseInt(searchParams.get("page") ?? "1"))
+                
+                    setData(_data)
+                
+        })
+        setCount((count) => count + 1); 
+    },[router])
     return <>
     <div className="relative w-full overflow-x-auto shadow-md">
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -47,14 +62,16 @@ const page: FC<pageProps> = async ({ }) => {
                 }
             </tbody>
         </table>
-    </div>
-    <Pagination
+        <Pagination
      totalItems={data.meta.totalItems}
      currentPage={data.meta.currentPage}
      itemsPerPage={data.meta.itemsPerPage}
-     renderPageLink={(page, limit) => `products?page=${page}&limit=${limit}`} />
+     renderPageLink={(page, limit) => `products?page=${page}&limit=${limit}`}
+     setPage={() => setPage(page)}  />
+    </div>
     </>
+   
 
 }
 
-export default page
+// export default page

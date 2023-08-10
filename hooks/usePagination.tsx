@@ -1,3 +1,4 @@
+'use client'
 import { dotts } from '../app/components/pagination'
 
 const getPages = (length: number, inc: number = 1) =>

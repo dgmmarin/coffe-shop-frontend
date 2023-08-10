@@ -1,3 +1,4 @@
+
 export default function Footer() {
     return <footer className="fixed bottom-0 flex flex-column w-full bg-white shadow rounded-lg p-4 md:p-6 xl:p-8 my-6 mx-4 mb-0">
     <ul className="flex items-center flex-wrap mb-6 md:mb-0">

@@ -1,3 +1,4 @@
+'use client'
 import { useEffect } from "react";
 import { useUser, User } from "./use-user";
 import { useLocalStorage } from "./local-storage";
