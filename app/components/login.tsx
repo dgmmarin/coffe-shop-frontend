@@ -1,17 +1,31 @@
-import { FC } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import { User } from "@/hooks/use-user";
+import { FC, useState } from "react";
 
 interface pageProps {}
 
 const Login: FC<pageProps> = ({}) => {
-    return <>
-    {/*
-      This example requires updating your template:
 
-      ```
-      <html class="h-full bg-white">
-      <body class="h-full">
-      ```
-    */}
+  const { user, login, logout, setUser } = useAuth();
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+
+  const handleFormSubmit = async (email:string, password:string) => {
+    const res = await fetch(`http://127.0.0.1:4000/auth/login`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    method:'POST',
+    body:JSON.stringify( {"email":email, "password":password})
+  })
+  let data = await res.json()
+  console.log(data)
+  login({authToken:data.access_token} as User)
+  return
+}
+
+    return <>
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <img
@@ -37,6 +51,8 @@ const Login: FC<pageProps> = ({}) => {
                 type="email"
                 autoComplete="email"
                 required
+                value={email}
+                onChange={e => { setEmail(e.currentTarget.value); }}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
@@ -60,6 +76,8 @@ const Login: FC<pageProps> = ({}) => {
                 type="password"
                 autoComplete="current-password"
                 required
+                value={password}
+                onChange={e => { setPassword(e.currentTarget.value); }}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
@@ -67,7 +85,9 @@ const Login: FC<pageProps> = ({}) => {
 
           <div>
             <button
-              type="submit"
+              onClick={() =>{
+                handleFormSubmit(email, password)
+              }}
               className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Sign in

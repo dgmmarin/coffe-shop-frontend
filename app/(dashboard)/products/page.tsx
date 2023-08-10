@@ -20,9 +20,9 @@ const Page = () =>{
     var page = parseInt(searchParams.get("page") ?? "1")
     
     useEffect(() =>{
-            getProducts(page, limit).then((dt) => {
-                setData(dt)
-            })
+        getProducts(page, limit).then((dt) => {
+            setData(dt)
+        })
     },[page])
 
     if (data.items.length == 0) {

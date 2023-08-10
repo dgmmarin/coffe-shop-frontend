@@ -25,15 +25,17 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
 
-  const { user, login, logout, setUser } = useAuth();
-  console.log("user", user)
+  const { login, logout, setUser, getUser } = useAuth();
   const router = useRouter()
   // Here is what you were missing
-  // useEffect(() => {
-  //   if (!user) {
-  //     router.push('/users');
-  //   }
-  // }, [user]);
+  let user ;
+  useEffect(() => {
+    user = getUser()
+    console.log("user", user)
+    if (!user) {
+      router.push('/users');
+    }
+  }, []);
 
   if (user) {
     return (
